@@ -30,7 +30,7 @@ class Products extends Model
         $params = [
             'id' => $id,
         ];
-        $result = $this->db->row('SELECT * FROM `products` WHERE id = :id', $params);
+        $result = $this->db->row('SELECT * FROM `products` WHERE `id` = :id', $params);
         if ($result) {
             $products = $this->productsJson($result);
             return $products;
@@ -52,7 +52,7 @@ class Products extends Model
 
     public function readCategory($catid)
     {
-        $resultId = $this->db->row("SELECT * FROM `products_categories` WHERE category_id = :catid", ['catid' => $catid]);
+        $resultId = $this->db->row("SELECT * FROM `products_categories` WHERE `category_id` = :catid", ['catid' => $catid]);
         if ($resultId) {
             foreach ($resultId as $resultKey) {
                 $resultIds[] = (int) $resultKey['product_id'];
@@ -61,7 +61,7 @@ class Products extends Model
         } else {
             return false;
         }
-        $result = $this->db->row("SELECT * FROM `products` WHERE id IN ($resultIds)");
+        $result = $this->db->row("SELECT * FROM `products` WHERE `id` IN ($resultIds)");
         if ($result) {
             $products = $this->productsJson($result);
             return $products;
@@ -94,7 +94,7 @@ class Products extends Model
     public function readCategoryAll($catid)
     {
 
-        $categories      = $this->db->row("SELECT category_id, parent_id FROM `categories`");
+        $categories      = $this->db->row("SELECT `category_id`, `parent_id` FROM `categories`");
         $categoriesArray = [];
         foreach ($categories as $category) {
             $categoriesArray[$category["parent_id"]][$category["category_id"]] = $category;
@@ -104,7 +104,7 @@ class Products extends Model
 		} else {
 			 $categoriesStr = $catid;
 		}
-        $resultId      = $this->db->row("SELECT product_id, category_id FROM  `products_categories` WHERE category_id IN ({$categoriesStr})");
+        $resultId      = $this->db->row("SELECT `product_id`, `category_id` FROM  `products_categories` WHERE `category_id` IN ({$categoriesStr})");
         if ($resultId) {
 			$resultIds = [];
             foreach ($resultId as $resultKey) {
@@ -114,7 +114,7 @@ class Products extends Model
         } else {
             return false;
         }
-        $result = $this->db->row("SELECT * FROM `products` WHERE id IN ({$resultIds})");
+        $result = $this->db->row("SELECT * FROM `products` WHERE `id` IN ({$resultIds})");
         if ($result) {
             $products = $this->productsJson($result);
             return $products;
@@ -127,7 +127,7 @@ class Products extends Model
     {
         $m      = (string) isset($m) ? $m : "";
         $mArray = explode("&", $m);
-        $query  = "SELECT * FROM `products` WHERE manufacturer = '{$mArray[0]}'";
+        $query  = "SELECT * FROM `products` WHERE `manufacturer` = '{$mArray[0]}'";
         for ($i = 1; $i < count($mArray); $i++) {
             $query .= " OR manufacturer ='{$mArray[$i]}'";
         }
@@ -143,7 +143,7 @@ class Products extends Model
     public function readSearch($s)
     {
         $keywords = (string) isset($s) ? $s : "";
-        $result   = $this->db->row("SELECT * FROM `products` WHERE name LIKE '%{$keywords}%' ORDER BY created DESC");
+        $result   = $this->db->row("SELECT * FROM `products` WHERE `name` LIKE '%{$keywords}%' ORDER BY created DESC");
         if ($result) {
             $products = $this->productsJson($result);
             return $products;

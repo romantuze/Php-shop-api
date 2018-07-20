@@ -1,3 +1,3 @@
 <?php
-echo $products;
+echo $product;
 ?>
