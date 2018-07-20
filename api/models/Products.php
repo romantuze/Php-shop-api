@@ -94,14 +94,19 @@ class Products extends Model
     public function readCategoryAll($catid)
     {
 
-        $categories      = $this->db->row("SELECT category_id, parent_id FROM  `categories`");
+        $categories      = $this->db->row("SELECT category_id, parent_id FROM `categories`");
         $categoriesArray = [];
         foreach ($categories as $category) {
             $categoriesArray[$category["parent_id"]][$category["category_id"]] = $category;
         }
+		if (isset($categoriesArray[0][$catid])) {
         $categoriesStr = $this->getInnerCategories($categoriesArray, 0, $catid);
-        $resultId      = $this->db->row("SELECT * FROM  `products_categories` WHERE category_id IN ({$categoriesStr})");
+		} else {
+			 $categoriesStr = $catid;
+		}
+        $resultId      = $this->db->row("SELECT product_id, category_id FROM  `products_categories` WHERE category_id IN ({$categoriesStr})");
         if ($resultId) {
+			$resultIds = [];
             foreach ($resultId as $resultKey) {
                 $resultIds[] = (int) $resultKey['product_id'];
             }
@@ -127,7 +132,6 @@ class Products extends Model
             $query .= " OR manufacturer ='{$mArray[$i]}'";
         }
         $result = $this->db->row($query);
-        //var_dump($query); die;
         if ($result) {
             $products = $this->productsJson($result);
             return $products;
